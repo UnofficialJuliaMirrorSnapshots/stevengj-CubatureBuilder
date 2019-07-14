@@ -1,0 +1,35 @@
+language: julia
+os:
+- linux
+julia:
+- 1.0
+notifications:
+  email: false
+git:
+  depth: 99999999
+cache:
+  timeout: 1000
+  directories:
+  - downloads
+env:
+  global:
+  - BINARYBUILDER_DOWNLOADS_CACHE=downloads
+  - BINARYBUILDER_AUTOMATIC_APPLE=true
+sudo: required
+jobs:
+before_script:
+  - julia -e 'using Pkg; pkg"add BinaryProvider"; pkg"add BinaryBuilder"; Pkg.build()'
+script:
+- julia build_tarballs.jl
+deploy:
+  provider: releases
+  api_key:
+      # Note; this api_key is only valid for stevengj/CubatureBuilder; you need
+      # to make your own: https://docs.travis-ci.com/user/deployment/releases/
+    secure: I/FhZjVWFhpXvF6qIrpKFBCOGitA27geM5sVhk/d7o+eRHGjlcMtrUPljXS3TLVdzgVHgewfXgGSUl12FV5vvt3Jv+JzaLwLHO2CKFV5w59hu/q4oq4mVv5t7eivNeZHR568+PM1R6hFhmimCg9XtP/0xZSILf+1AkAGF0tIXHaOGc+if8ackeYEnhcj/mIOf9R0cc1uQERbbDnGDlTJhzWlkU3aDuOtnH4cgN7X2m++5Ru2zQYP5FGQDNP1B/duaaaJHQ1pfeC7SSGoadODsAOnUAdi9Nvru/vsWm4SXFMqMcAnVXHG+7H62F3ylAJRkOVW5jBif8tywOmVsonDoQf+GlaeO5yXBS4M7Kzz8wjiF3ultIKUxQx7GPgnUEEn2ez+eI6qEGXIUA5EO9QQebb1I3RoIdG6irKO9UNZdwe6nrumB7DEVdB4vNgHRu4/MGPaIhyaenjJRhOcszeRv7q6gbKa592g70GOGUOitEG86udNTHheLCXXXZdDdegVN/Ez/787jqNz+AZJuvT3dIH56do9UG8NdCR8YnOUoUiRdmdL60iAmmB8RvtGfSXvfB8jRchC5M3RtlClGTqy4ma23VbK8ctFkm2g7FuXG40VQo4dHZOP3ek0H2AKI4LsLE5Z/RyjfIfWeT+wDdRE3OfjL9q1bsxWKcAOINPNrX0=
+  file_glob: true
+  file: products/*
+  skip_cleanup: true
+  on:
+    repo: stevengj/CubatureBuilder
+    tags: true
